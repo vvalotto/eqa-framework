@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Entorno virtual
+.venv/
+venv/
+env/
+
+# Testing y cobertura
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Base de datos de arquitectura
+.quality_control/
+
+# macOS
+.DS_Store
+
+# Distribución
+dist/
+*.whl
+*.tar.gz

@@ -1,0 +1,140 @@
+[build-system]
+requires      = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name        = "eqa-framework"
+version     = "0.1.0"
+description = "Framework de Control de Calidad Automatizado para C Embebido"
+readme      = "README.md"
+license     = "MIT"
+requires-python = ">=3.11"
+authors     = [{name = "Victor Valotto", email = "vvalotto@gmail.com"}]
+keywords    = ["embedded", "quality", "misra", "iec62304", "cppcheck", "static-analysis", "c"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "click>=8.1.7",
+    "rich>=13.7.0",
+    "pyyaml>=6.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "isort>=5.12.0",
+    "pre-commit>=3.5.0",
+]
+
+[project.scripts]
+codeguard-c        = "eqa_framework.codeguard_c.agent:main"
+designreviewer-c   = "eqa_framework.designreviewer_c.agent:main"
+architectanalyst-c = "eqa_framework.architectanalyst_c.agent:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# ── Herramientas ──────────────────────────────────────────────────────────────
+
+[tool.black]
+line-length    = 100
+target-version = ["py311"]
+
+[tool.isort]
+profile     = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "B", "C4"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version        = "3.11"
+strict                = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts   = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["src/eqa_framework"]
+
+# ── Configuración de agentes (defaults) ───────────────────────────────────────
+
+[tool.codeguard-c]
+max_cyclomatic_complexity = 10
+max_function_lines        = 50
+exclude_patterns          = ["build/", "third_party/", "*.pb.c"]
+
+[tool.codeguard-c.checks]
+misra_mandatory = true
+misra_required  = true
+misra_advisory  = false
+security        = true
+complexity      = true
+uninitialized   = true
+null_pointer    = true
+buffer_overflow = true
+
+[tool.codeguard-c.ai]
+enabled = false
+
+[tool.designreviewer-c]
+max_fan_out        = 12
+max_function_lines = 80
+max_parameters     = 6
+max_nesting_depth  = 4
+max_cc_critical    = 15
+exclude_patterns   = ["build/", "third_party/", "test/mocks/"]
+
+[tool.designreviewer-c.checks]
+circular_includes  = true
+layer_violations   = true
+global_variables   = true
+include_guards     = true
+non_portable_types = true
+dangerous_casts    = true
+
+[tool.designreviewer-c.ai]
+enabled = false
+
+[tool.architectanalyst-c]
+max_instability       = 0.8
+max_distance_warning  = 0.3
+max_distance_critical = 0.5
+db_path               = ".quality_control/embedded_architecture.db"
+exclude_patterns      = ["build/", "third_party/"]
+
+[tool.architectanalyst-c.checks]
+coupling          = true
+instability       = true
+distance          = true
+dependency_cycles = true
+layer_violations  = true
+misra_coverage    = true
+
+[tool.architectanalyst-c.layers]
+# Definir la arquitectura en capas del proyecto C analizado
+# platform    = []
+# hal         = ["platform"]
+# bsp         = ["hal", "platform"]
+# drivers     = ["hal", "bsp"]
+# application = ["drivers", "hal"]
+
+[tool.architectanalyst-c.ai]
+enabled = false
