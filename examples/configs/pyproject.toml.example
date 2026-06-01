@@ -1,0 +1,71 @@
+# pyproject.toml.example — Referencia de configuración completa para eqa-framework
+#
+# Copiar las secciones relevantes a tu pyproject.toml y ajustar según el proyecto.
+
+[tool.codeguard-c]
+max_cyclomatic_complexity = 10
+max_function_lines        = 50
+min_dead_code_confidence  = 60
+exclude_patterns          = ["build/", "third_party/", "*.pb.c"]
+
+[tool.codeguard-c.checks]
+misra_mandatory = true
+misra_required  = true
+misra_advisory  = false
+security        = true
+complexity      = true
+uninitialized   = true
+null_pointer    = true
+buffer_overflow = true
+
+[tool.codeguard-c.ai]
+enabled    = false
+max_tokens = 500
+
+[tool.designreviewer-c]
+max_fan_out        = 12
+max_function_lines = 80
+max_parameters     = 6
+max_nesting_depth  = 4
+max_cc_critical    = 15
+exclude_patterns   = ["build/", "third_party/", "test/mocks/"]
+
+[tool.designreviewer-c.checks]
+circular_includes   = true
+layer_violations    = true
+global_variables    = true
+include_guards      = true
+non_portable_types  = true
+dangerous_casts     = true
+
+[tool.designreviewer-c.ai]
+enabled    = false
+max_tokens = 800
+
+[tool.architectanalyst-c]
+max_instability       = 0.8
+max_distance_warning  = 0.3
+max_distance_critical = 0.5
+db_path               = ".quality_control/embedded_architecture.db"
+exclude_patterns      = ["build/", "third_party/", "__pycache__"]
+
+[tool.architectanalyst-c.checks]
+coupling          = true
+instability       = true
+distance          = true
+dependency_cycles = true
+layer_violations  = true
+misra_coverage    = true
+
+[tool.architectanalyst-c.layers]
+# Definir la arquitectura en capas del proyecto C analizado.
+# Ejemplo para sistema embebido típico:
+# platform      = []
+# hal           = ["platform"]
+# bsp           = ["hal", "platform"]
+# drivers       = ["hal", "bsp"]
+# application   = ["drivers", "hal"]
+
+[tool.architectanalyst-c.ai]
+enabled    = false
+max_tokens = 1500
