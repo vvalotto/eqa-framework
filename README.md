@@ -10,11 +10,11 @@ Framework Python de código abierto que orquesta herramientas de análisis está
 
 ## Agentes
 
-| Agente | Cuándo | Tiempo | Comportamiento |
-|--------|--------|--------|----------------|
-| `codeguard-c` | Pre-commit | < 15s | Solo advierte, nunca bloquea |
-| `designreviewer-c` | PR review | 2–10 min | Bloquea si hay CRITICAL |
-| `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, histórico SQLite |
+| Agente | Cuándo usarlo | Tiempo estimado | Comportamiento ante fallos |
+|--------|---------------|-----------------|---------------------------|
+| `codeguard-c` | Pre-commit | < 15 s | Solo advierte, nunca bloquea |
+| `designreviewer-c` | PR review | 2–10 min | Bloquea si hay hallazgos CRITICAL |
+| `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite |
 
 ## Instalación
 
@@ -22,12 +22,12 @@ Framework Python de código abierto que orquesta herramientas de análisis está
 pip install eqa-framework
 ```
 
-### Dependencias de sistema
+### Dependencias de sistema requeridas
 
 ```bash
 # cppcheck (obligatorio)
-sudo apt install cppcheck        # Linux
-brew install cppcheck            # macOS
+brew install cppcheck        # macOS
+sudo apt install cppcheck    # Linux
 
 # flawfinder y lizard
 pip install flawfinder lizard
@@ -43,12 +43,16 @@ architectanalyst-c src/ --sprint-id sprint-01
 
 ## Configuración
 
-En `pyproject.toml` o `.embedded-qa.toml`:
+Los agentes se configuran en `pyproject.toml` del proyecto C que se analiza:
 
 ```toml
 [tool.codeguard-c]
 max_cyclomatic_complexity = 10
 max_function_lines        = 50
+
+[tool.designreviewer-c]
+max_fan_out    = 12
+max_parameters = 6
 
 [tool.architectanalyst-c.layers]
 platform    = []
@@ -56,15 +60,11 @@ hal         = ["platform"]
 application = ["hal"]
 ```
 
-## Desarrollo
+Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) para la referencia completa de todas las opciones.
 
-```bash
-git clone https://github.com/vvalotto/eqa-framework.git
-cd eqa-framework
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-pytest
-```
+## Contribuir
+
+Ver [CLAUDE.md](CLAUDE.md) para instrucciones de entorno, convenciones y arquitectura interna.
 
 ## Licencia
 
