@@ -16,7 +16,7 @@ class DesignReviewerOrchestrator:
 
     def __init__(self, config: DesignReviewerConfig) -> None:
         self._config = config
-        self._analyzers = [IncludeGraphAnalyzer(config), LayerViolationsAnalyzer()]
+        self._analyzers = [IncludeGraphAnalyzer(config), LayerViolationsAnalyzer(config)]
 
     def run(self, project_root: Path, target_files: list[Path]) -> Report:
         context = ExecutionContext(project_root=project_root, target_files=target_files)
