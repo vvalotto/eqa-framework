@@ -16,10 +16,12 @@ class DesignReviewerConfig:
     exclude_patterns: list[str] = field(
         default_factory=lambda: ["build/", "third_party/", "test/mocks/"]
     )
+    layers: dict[str, list[str]] = field(default_factory=dict)
 
     @classmethod
     def from_project(cls, project_root: Path) -> DesignReviewerConfig:
         data = load_toml_section(project_root, "designreviewer-c")
+        layers_raw: dict[str, list[str]] = {k: list(v) for k, v in data.get("layers", {}).items()}
         return cls(
             max_fan_out=int(data.get("max_fan_out", 12)),
             max_function_lines=int(data.get("max_function_lines", 80)),
@@ -29,4 +31,5 @@ class DesignReviewerConfig:
             exclude_patterns=list(
                 data.get("exclude_patterns", ["build/", "third_party/", "test/mocks/"])
             ),
+            layers=layers_raw,
         )
