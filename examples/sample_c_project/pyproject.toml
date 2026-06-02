@@ -1,0 +1,42 @@
+# pyproject.toml — eqa-framework sample project configuration
+#
+# This file configures all three eqa-framework agents for this sample project.
+# Use it as a starting point for your own embedded C project.
+
+[tool.codeguard-c]
+max_cyclomatic_complexity = 10
+max_function_lines        = 50
+exclude_patterns          = ["build/", "third_party/"]
+
+[tool.codeguard-c.checks]
+misra_mandatory = true
+misra_required  = true
+misra_advisory  = true      # enabled to produce INFO findings
+security        = true
+complexity      = true
+
+[tool.designreviewer-c]
+max_fan_out        = 5
+max_function_lines = 60
+max_parameters     = 6
+max_nesting_depth  = 4
+exclude_patterns   = ["build/"]
+
+[tool.designreviewer-c.checks]
+circular_includes  = true
+layer_violations   = true
+include_guards     = true
+
+[tool.designreviewer-c.layers]
+# IEC 62304 inspired layer architecture for embedded systems.
+# hal_uart.c violates this by including app/app_logic.h.
+platform = []
+hal      = ["platform"]
+app      = ["hal", "platform"]
+
+[tool.architectanalyst-c]
+max_instability       = 0.8
+max_distance_warning  = 0.3
+max_distance_critical = 0.5
+db_path               = ".quality_control/architecture.db"
+exclude_patterns      = ["build/"]
