@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -16,4 +17,12 @@ class ExecutionContext:
 
 def load_toml_section(project_root: Path, section: str) -> dict[str, Any]:
     """Lee [tool.<section>] desde pyproject.toml o .embedded-qa.toml."""
-    raise NotImplementedError
+    for filename in ("pyproject.toml", ".embedded-qa.toml"):
+        config_file = project_root / filename
+        if not config_file.exists():
+            continue
+        data = tomllib.loads(config_file.read_text(encoding="utf-8"))
+        tool: dict[str, Any] = data.get("tool", {})
+        section_data: dict[str, Any] = tool.get(section, {})
+        return section_data
+    return {}
