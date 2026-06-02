@@ -3,6 +3,7 @@
 **Framework de Control de Calidad Automatizado para C Embebido**
 
 [![CI](https://github.com/vvalotto/eqa-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/vvalotto/eqa-framework/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/eqa-framework.svg)](https://pypi.org/project/eqa-framework/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -10,11 +11,11 @@ Framework Python de código abierto que orquesta herramientas de análisis está
 
 ## Agentes
 
-| Agente | Cuándo usarlo | Tiempo estimado | Comportamiento ante fallos |
-|--------|---------------|-----------------|---------------------------|
-| `codeguard-c` | Pre-commit | < 15 s | Solo advierte, nunca bloquea |
-| `designreviewer-c` | PR review | 2–10 min | Bloquea si hay hallazgos CRITICAL |
-| `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite |
+| Agente | Cuándo usarlo | Tiempo estimado | Comportamiento ante fallos | Estado |
+|--------|---------------|-----------------|---------------------------|--------|
+| `codeguard-c` | Pre-commit | < 15 s | Solo advierte, nunca bloquea | ✅ v0.1.0 |
+| `designreviewer-c` | PR review | 2–10 min | Bloquea si hay hallazgos CRITICAL | 🚧 v0.2.0 |
+| `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite | 🔜 v0.3.0 |
 
 ## Instalación
 
@@ -61,6 +62,12 @@ application = ["hal"]
 ```
 
 Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) para la referencia completa de todas las opciones.
+
+## Documentación técnica
+
+- [`docs/agentes/codeguard-c.md`](docs/agentes/codeguard-c.md) — referencia técnica de checks y configuración
+- [`docs/guias/uso-codeguard-c.md`](docs/guias/uso-codeguard-c.md) — guía de usuario paso a paso
+- [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) — todas las opciones de configuración
 
 ## Contribuir
 
