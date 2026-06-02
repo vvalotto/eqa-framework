@@ -15,7 +15,7 @@ class CodeGuardOrchestrator:
 
     def __init__(self, config: CodeGuardConfig) -> None:
         self._config = config
-        self._checks = [MisraCheck(), SecurityCheck(), ComplexityCheck()]
+        self._checks = [MisraCheck(), SecurityCheck(), ComplexityCheck(config)]
 
     def run(self, project_root: Path, target_files: list[Path]) -> Report:
         context = ExecutionContext(project_root=project_root, target_files=target_files)
