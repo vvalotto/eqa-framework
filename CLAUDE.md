@@ -4,6 +4,18 @@ Guía para desarrolladores y para Claude Code. El README cubre instalación y us
 
 ---
 
+## Estado actual
+
+| Agente | Milestone | Estado |
+|--------|-----------|--------|
+| `codeguard-c` | v0.1.0 | ✅ Implementado y publicado en PyPI |
+| `designreviewer-c` | v0.2.0 | 🚧 En desarrollo (issues #7–#9) |
+| `architectanalyst-c` | v0.3.0 | 🔜 Pendiente |
+
+56 tests en total (unit + integration + e2e). `shared/` completamente funcional.
+
+---
+
 ## Arquitectura
 
 Tres agentes CLI independientes que comparten el paquete `shared/`:
@@ -129,5 +141,7 @@ Los tests de integración y e2e requieren cppcheck instalado en el sistema.
 ## Archivos de referencia
 
 - `examples/configs/pyproject.toml.example` — todas las opciones de configuración de los tres agentes
-- `examples/sample_c_project/` — proyecto C de ejemplo para demos y tests e2e
+- `examples/sample_c_project/` — proyecto C de ejemplo con violaciones controladas para los tres agentes
+- `docs/agentes/codeguard-c.md` — referencia técnica de CodeGuard-C (checks, salidas, configuración)
+- `docs/guias/uso-codeguard-c.md` — guía de usuario de CodeGuard-C
 - `docs/specs/` — plan del proyecto y plan de entorno original
