@@ -75,6 +75,9 @@ disallow_untyped_decorators = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts   = "-v --tb=short"
+markers   = [
+    "integration: tests that invoke real external tools (cppcheck, lizard, flawfinder)",
+]
 
 [tool.coverage.run]
 source = ["src/eqa_framework"]

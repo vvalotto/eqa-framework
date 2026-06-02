@@ -1,8 +1,8 @@
 # Plan de Creación de Entorno — eqa-framework
 
-**Proyecto:** `eqa-framework`  
-**Descripción:** Framework de Control de Calidad Automatizado para C Embebido  
-**Visibilidad:** Público  
+**Proyecto:** `eqa-framework`
+**Descripción:** Framework de Control de Calidad Automatizado para C Embebido
+**Visibilidad:** Público
 **Fecha:** Mayo 2026
 
 ---
