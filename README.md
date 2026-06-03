@@ -15,7 +15,7 @@ Framework Python de código abierto que orquesta herramientas de análisis está
 |--------|---------------|-----------------|---------------------------|--------|
 | `codeguard-c` | Pre-commit | < 15 s | Solo advierte, nunca bloquea | ✅ v0.1.0 |
 | `designreviewer-c` | PR review | < 10 s | Bloquea si hay hallazgos CRITICAL | ✅ v0.2.0 |
-| `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite | 🚧 v0.3.0 |
+| `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite | ✅ v0.3.0 |
 
 ## Instalación
 
@@ -69,6 +69,8 @@ Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.
 - [`docs/guias/codeguard-c.md`](docs/guias/codeguard-c.md) — guía de usuario de CodeGuard-C
 - [`docs/agentes/designreviewer-c.md`](docs/agentes/designreviewer-c.md) — referencia técnica de DesignReviewer-C
 - [`docs/guias/designreviewer-c.md`](docs/guias/designreviewer-c.md) — guía de usuario de DesignReviewer-C
+- [`docs/agentes/architectanalyst-c.md`](docs/agentes/architectanalyst-c.md) — referencia técnica de ArchitectAnalyst-C
+- [`docs/guias/architectanalyst-c.md`](docs/guias/architectanalyst-c.md) — guía de usuario de ArchitectAnalyst-C
 - [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) — todas las opciones de configuración
 
 ## Contribuir
