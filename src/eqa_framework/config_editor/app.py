@@ -174,7 +174,7 @@ class EqaConfigApp(App[None]):
         table.add_columns("Agente", "Clave", "Default", "Proyecto", "Personal", "Efectivo")
         self._refresh_table()
 
-    def _refresh_table(self) -> None:
+    def _refresh_table(self, restore_row: int = 0) -> None:
         table = self.query_one(DataTable)
         table.clear()
         for spec in _SCHEMA:
@@ -197,6 +197,7 @@ class EqaConfigApp(App[None]):
                 _fmt(effective),
             )
             table.add_row(*row, key=f"{spec.agent}::{spec.key}")
+        table.move_cursor(row=restore_row)
 
     def _current_spec(self) -> KeySpec | None:
         table = self.query_one(DataTable)
@@ -207,6 +208,8 @@ class EqaConfigApp(App[None]):
 
     @work
     async def action_edit_row(self) -> None:
+        table = self.query_one(DataTable)
+        current_row = table.cursor_row
         spec = self._current_spec()
         if spec is None:
             return
@@ -224,15 +227,17 @@ class EqaConfigApp(App[None]):
             return
         self._personal.set(spec.agent, spec.key, parsed)
         self._dirty = True
-        self._refresh_table()
+        self._refresh_table(restore_row=current_row)
 
     def action_delete_row(self) -> None:
+        table = self.query_one(DataTable)
+        current_row = table.cursor_row
         spec = self._current_spec()
         if spec is None:
             return
         self._personal.delete(spec.agent, spec.key)
         self._dirty = True
-        self._refresh_table()
+        self._refresh_table(restore_row=current_row)
         self.notify(f"{spec.key} eliminado de config personal")
 
     def action_save(self) -> None:
