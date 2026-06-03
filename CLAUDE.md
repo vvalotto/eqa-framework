@@ -8,11 +8,11 @@ Guía para desarrolladores y para Claude Code. El README cubre instalación y us
 
 | Agente | Milestone | Estado |
 |--------|-----------|--------|
-| `codeguard-c` | v0.1.0 | ✅ Implementado y publicado en PyPI |
+| `codeguard-c` | v0.1.0 | ✅ Implementado |
 | `designreviewer-c` | v0.2.0 | ✅ Implementado (issues #7–#9 cerrados) |
 | `architectanalyst-c` | v0.3.0 | ✅ Implementado (issues #10–#12 cerrados) |
 
-118 tests en total (unit + integration + e2e). `shared/` completamente funcional.
+151 tests en total (unit + integration + e2e). `shared/` completamente funcional.
 
 ---
 
