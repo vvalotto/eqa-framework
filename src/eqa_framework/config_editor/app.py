@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.screen import ModalScreen
@@ -204,6 +205,7 @@ class EqaConfigApp(App[None]):
         spec: KeySpec = _SCHEMA[table.cursor_row]
         return spec
 
+    @work
     async def action_edit_row(self) -> None:
         spec = self._current_spec()
         if spec is None:
@@ -238,6 +240,7 @@ class EqaConfigApp(App[None]):
         self._dirty = False
         self.notify("Guardado en ~/.config/eqa/config.toml")
 
+    @work
     async def action_request_quit(self) -> None:
         if self._dirty:
             confirmed = await self.push_screen_wait(QuitScreen())

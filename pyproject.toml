@@ -76,9 +76,10 @@ module = ["eqa_framework.*.agent"]
 disallow_untyped_decorators = false
 
 [[tool.mypy.overrides]]
-# Textual no expone tipos genéricos que mypy strict pueda resolver en subclases
+# Textual no expone tipos genéricos que mypy strict pueda resolver en subclases ni decoradores
 module = ["eqa_framework.config_editor.app"]
 disallow_subclassing_any = false
+disallow_untyped_decorators = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
