@@ -133,7 +133,7 @@ Los tests de integración y e2e requieren cppcheck instalado en el sistema.
 ## CI/CD
 
 - **CI** (`.github/workflows/ci.yml`): lint (black, ruff, mypy) + pytest en Python 3.11 y 3.12
-- **Release** (`.github/workflows/release.yml`): tag `v*.*.*` publica a PyPI via `PYPI_API_TOKEN`
+- **Releases**: tags `v*.*.*` + GitHub Release creado manualmente con `gh release create`
 - **Branch protection** en `main`: PRs requeridos, los tres jobs de CI deben pasar
 
 ---
