@@ -16,6 +16,16 @@ Framework Python de código abierto que orquesta herramientas de análisis está
 | `designreviewer-c` | PR review | < 10 s | Bloquea si hay hallazgos CRITICAL | ✅ v0.2.0 |
 | `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite | ✅ v0.3.0 |
 
+## Editor de configuración personal
+
+`eqa-config` es una TUI que permite a cada desarrollador sobreescribir umbrales de los agentes a nivel personal, sin tocar el `pyproject.toml` del proyecto.
+
+```bash
+eqa-config
+```
+
+Los valores se guardan en `~/.config/eqa/config.toml` y tienen precedencia sobre la configuración del proyecto.
+
 ## Instalación
 
 ```bash
@@ -25,12 +35,11 @@ pip install eqa-framework
 ### Dependencias de sistema requeridas
 
 ```bash
-# cppcheck (obligatorio)
+# cppcheck (obligatorio para codeguard-c)
 brew install cppcheck        # macOS
 sudo apt install cppcheck    # Linux
 
-# flawfinder y lizard
-pip install flawfinder lizard
+# flawfinder y lizard (incluidos en pip install eqa-framework)
 ```
 
 ## Uso rápido
@@ -39,6 +48,7 @@ pip install flawfinder lizard
 codeguard-c src/
 designreviewer-c src/ --format json
 architectanalyst-c src/ --sprint-id sprint-01
+eqa-config
 ```
 
 ## Configuración
@@ -64,12 +74,19 @@ Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.
 
 ## Documentación técnica
 
+**Agentes de análisis:**
 - [`docs/agentes/codeguard-c.md`](docs/agentes/codeguard-c.md) — referencia técnica de CodeGuard-C
 - [`docs/guias/codeguard-c.md`](docs/guias/codeguard-c.md) — guía de usuario de CodeGuard-C
 - [`docs/agentes/designreviewer-c.md`](docs/agentes/designreviewer-c.md) — referencia técnica de DesignReviewer-C
 - [`docs/guias/designreviewer-c.md`](docs/guias/designreviewer-c.md) — guía de usuario de DesignReviewer-C
 - [`docs/agentes/architectanalyst-c.md`](docs/agentes/architectanalyst-c.md) — referencia técnica de ArchitectAnalyst-C
 - [`docs/guias/architectanalyst-c.md`](docs/guias/architectanalyst-c.md) — guía de usuario de ArchitectAnalyst-C
+
+**Editor de configuración:**
+- [`docs/agentes/eqa-config.md`](docs/agentes/eqa-config.md) — referencia técnica de eqa-config
+- [`docs/guias/eqa-config.md`](docs/guias/eqa-config.md) — guía de usuario de eqa-config
+
+**Referencia:**
 - [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) — todas las opciones de configuración
 
 ## Contribuir
