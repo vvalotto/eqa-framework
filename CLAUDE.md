@@ -6,29 +6,31 @@ Guía para desarrolladores y para Claude Code. El README cubre instalación y us
 
 ## Estado actual
 
-| Agente | Milestone | Estado |
-|--------|-----------|--------|
+| Componente | Milestone | Estado |
+|------------|-----------|--------|
 | `codeguard-c` | v0.1.0 | ✅ Implementado |
 | `designreviewer-c` | v0.2.0 | ✅ Implementado (issues #7–#9 cerrados) |
 | `architectanalyst-c` | v0.3.0 | ✅ Implementado (issues #10–#12 cerrados) |
+| `eqa-config` (TUI) | v0.4.0 | ✅ Implementado (issues #31–#35 cerrados) |
 
-151 tests en total (unit + integration + e2e). `shared/` completamente funcional.
+205 tests en total (unit + integration + e2e). `shared/` completamente funcional.
 
 ---
 
 ## Arquitectura
 
-Tres agentes CLI independientes que comparten el paquete `shared/`:
+Tres agentes CLI + una TUI de configuración, todos comparten el paquete `shared/`:
 
 ```
 src/eqa_framework/
-├── shared/           ← clases base, config, reporting (reutilizadas por los tres agentes)
+├── shared/           ← clases base, config con merge personal, reporting
 ├── codeguard_c/      ← CLI: codeguard-c    | orquesta cppcheck + flawfinder + lizard
 ├── designreviewer_c/ ← CLI: designreviewer-c | analiza dependencias e includes
-└── architectanalyst_c/ ← CLI: architectanalyst-c | métricas de acoplamiento, histórico SQLite
+├── architectanalyst_c/ ← CLI: architectanalyst-c | métricas de acoplamiento, histórico SQLite
+└── config_editor/    ← CLI: eqa-config     | TUI Textual para config personal
 ```
 
-Cada agente tiene la misma estructura interna:
+Cada agente CLI tiene la misma estructura interna:
 
 ```
 <agente>/
@@ -39,7 +41,32 @@ Cada agente tiene la misma estructura interna:
     └── *.py        ← implementación de cada verificación
 ```
 
+El módulo `config_editor/` tiene estructura propia:
+
+```
+config_editor/
+├── __init__.py
+├── personal_config.py  ← PersonalConfig: load/set/delete/save (~/.config/eqa/config.toml)
+└── app.py              ← EqaConfigApp (Textual), EditScreen, QuitScreen, _SCHEMA
+```
+
 Las herramientas externas (cppcheck, flawfinder, lizard) se invocan como subprocesos desde los checks.
+
+---
+
+## Precedencia de configuración
+
+`shared/config.load_toml_section()` fusiona tres capas:
+
+```
+defaults del dataclass de cada agente
+    ↓ sobreescrito por
+[tool.<agente>] en pyproject.toml del proyecto
+    ↓ sobreescrito por
+[<agente>] en ~/.config/eqa/config.toml  ← config personal
+```
+
+El merge es clave a clave (`apply_personal=True` por defecto). Los tests que verifican solo la carga de config de proyecto usan `apply_personal=False`.
 
 ---
 
@@ -49,12 +76,15 @@ Las herramientas externas (cppcheck, flawfinder, lizard) se invocan como subproc
 
 ```bash
 brew install cppcheck          # macOS — obligatorio para codeguard-c
-# pip install flawfinder lizard  ← ya incluidos en pip install -e ".[dev]"
 ```
 
 **Setup del proyecto:**
 
 ```bash
+# Con uv (recomendado — sincroniza el venv existente):
+uv pip install -e ".[dev]"
+
+# O con pip directamente:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
@@ -66,6 +96,7 @@ pre-commit install
 ```bash
 cppcheck --version             # Cppcheck 2.x
 codeguard-c --help
+eqa-config --help
 pytest
 pre-commit run --all-files
 ```
@@ -108,6 +139,8 @@ pre-commit run --all-files                      # todos los checks juntos
 - `main` — producción, protegida (PRs requeridos, CI debe pasar)
 - `feat/<nombre>` — features nuevas
 - `fix/<nombre>` — bugfixes
+- `docs/<nombre>` — documentación
+- `test/<nombre>` — tests
 
 ---
 
@@ -121,9 +154,11 @@ tests/
 ├── unit/
 │   ├── codeguard_c/
 │   ├── designreviewer_c/
-│   └── architectanalyst_c/
-├── integration/     ← tests que invocan las herramientas C reales
-└── e2e/             ← tests sobre el proyecto de ejemplo en examples/sample_c_project/
+│   ├── architectanalyst_c/
+│   ├── config_editor/       ← test_personal_config.py, test_merge_config.py, test_app.py
+│   └── shared/
+├── integration/             ← tests que invocan las herramientas C reales + config merge
+└── e2e/                     ← tests sobre el proyecto de ejemplo en examples/sample_c_project/
 ```
 
 Los tests de integración y e2e requieren cppcheck instalado en el sistema.
@@ -148,4 +183,6 @@ Los tests de integración y e2e requieren cppcheck instalado en el sistema.
 - `docs/guias/designreviewer-c.md` — guía de usuario de DesignReviewer-C
 - `docs/agentes/architectanalyst-c.md` — referencia técnica de ArchitectAnalyst-C (ARC001, ARC002, ARC003)
 - `docs/guias/architectanalyst-c.md` — guía de usuario de ArchitectAnalyst-C
+- `docs/agentes/eqa-config.md` — referencia técnica de eqa-config (TUI, PersonalConfig, precedencia)
+- `docs/guias/eqa-config.md` — guía de usuario de eqa-config
 - `docs/specs/` — plan del proyecto y plan de entorno original
