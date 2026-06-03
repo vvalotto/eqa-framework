@@ -3,7 +3,6 @@
 **Framework de Control de Calidad Automatizado para C Embebido**
 
 [![CI](https://github.com/vvalotto/eqa-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/vvalotto/eqa-framework/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/eqa-framework.svg)](https://pypi.org/project/eqa-framework/)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -55,10 +54,10 @@ max_function_lines        = 50
 max_fan_out    = 12
 max_parameters = 6
 
-[tool.architectanalyst-c.layers]
-platform    = []
-hal         = ["platform"]
-application = ["hal"]
+[tool.architectanalyst-c]
+max_instability       = 0.8
+max_distance_critical = 0.5
+db_path               = ".quality_control/architecture.db"
 ```
 
 Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) para la referencia completa de todas las opciones.
