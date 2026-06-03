@@ -9,11 +9,13 @@ jobs:
   publish:
     name: Publish to PyPI
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # requerido para trusted publishing
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
