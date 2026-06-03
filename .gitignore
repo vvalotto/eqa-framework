@@ -45,3 +45,6 @@ htmlcov/
 dist/
 *.whl
 *.tar.gz
+
+# Reportes temporales
+tmp/
