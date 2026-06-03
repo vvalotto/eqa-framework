@@ -13,6 +13,13 @@ from eqa_framework.architectanalyst_c.config import ArchitectAnalystConfig
 from eqa_framework.architectanalyst_c.metrics.coupling_analyzer import ModuleMetrics
 from eqa_framework.architectanalyst_c.orchestrator import ArchitectAnalystOrchestrator
 from eqa_framework.architectanalyst_c.snapshot_store import Snapshot
+from eqa_framework.shared.report import (
+    DimensionStatus,
+    QualityReport,
+    StatusLiteral,
+    render_markdown,
+    write_report,
+)
 from eqa_framework.shared.reporting import Report, Severity
 
 _SEVERITY_STYLE: dict[Severity, str] = {
@@ -130,6 +137,76 @@ def _find_project_root(start: Path) -> Path:
     return current
 
 
+def _build_quality_report(
+    report: Report,
+    metrics: list[ModuleMetrics],
+    previous: Snapshot | None,
+    target_path: str,
+    file_count: int,
+) -> QualityReport:
+    from datetime import date
+
+    def _dim(name: str, rules: list[str]) -> DimensionStatus:
+        matching = [f for f in report.findings if f.rule in rules]
+        critical = [f for f in matching if f.severity == Severity.CRITICAL]
+        warnings = [f for f in matching if f.severity == Severity.WARNING]
+        status: StatusLiteral
+        if critical:
+            status = "critical"
+            top = critical[:5]
+        elif warnings:
+            status = "warning"
+            top = warnings[:5]
+        else:
+            return DimensionStatus(name, "ok")
+        findings_str = [f.message[:80] for f in top]
+        return DimensionStatus(name, status, findings_str)
+
+    instability_dim = _dim("Inestabilidad", ["ARC001"])
+    distance_dim = _dim("Distancia", ["ARC002", "ARC003"])
+    dims = [instability_dim, distance_dim]
+
+    # Tendencia histórica si hay snapshot previo
+    trend_note = ""
+    if previous:
+        prev_modules = set(previous.modules.keys())
+        curr_modules = {m.module for m in metrics}
+        if prev_modules:
+            worsened = [
+                m.module
+                for m in metrics
+                if m.module in prev_modules
+                and m.distance > previous.modules[m.module].distance + 0.05
+            ]
+            if worsened:
+                trend_note = f" ↑ Distancia empeoró respecto al análisis anterior en: {', '.join(worsened[:3])}."
+            new_modules = curr_modules - prev_modules
+            if new_modules:
+                trend_note += f" {len(new_modules)} módulo(s) nuevo(s)."
+
+    any_critical = any(d.status == "critical" for d in dims)
+    any_warning = any(d.status == "warning" for d in dims)
+    if any_critical:
+        summary = f"Se detectaron módulos en zona crítica de la Main Sequence.{trend_note}"
+    elif any_warning:
+        summary = f"Hay módulos con métricas de acoplamiento que merecen atención.{trend_note}"
+    else:
+        summary = (
+            f"Arquitectura dentro de los umbrales configurados.{trend_note}"
+            if trend_note
+            else "Arquitectura dentro de los umbrales configurados. Sin observaciones."
+        )
+
+    return QualityReport(
+        agent_name="ArchitectAnalyst-C",
+        target_path=target_path,
+        file_count=file_count,
+        date=str(date.today()),
+        dimensions=dims,
+        summary=summary,
+    )
+
+
 @click.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
 @click.option(
@@ -137,7 +214,17 @@ def _find_project_root(start: Path) -> Path:
 )
 @click.option("--format", "fmt", type=click.Choice(["text", "json"]), default="text")
 @click.option("--config", "config_path", type=click.Path(path_type=Path), default=None)
-def main(path: Path, sprint_id: str, fmt: str, config_path: Path | None) -> None:
+@click.option(
+    "--report",
+    "report_output",
+    is_flag=False,
+    flag_value="-",
+    default=None,
+    help="Genera perfil de calidad en Markdown. Sin argumento: stdout. Con argumento: archivo.",
+)
+def main(
+    path: Path, sprint_id: str, fmt: str, config_path: Path | None, report_output: str | None
+) -> None:
     """ArchitectAnalyst-C — análisis arquitectónico de fin de sprint."""
     project_root = config_path.parent if config_path else _find_project_root(path)
     config = ArchitectAnalystConfig.from_project(project_root)
@@ -150,6 +237,11 @@ def main(path: Path, sprint_id: str, fmt: str, config_path: Path | None) -> None
         _render_json(metrics, report)
     else:
         _render_text(metrics, previous, report, elapsed)
+
+    if report_output is not None:
+        output = None if report_output == "-" else report_output
+        qr = _build_quality_report(report, metrics, previous, str(path), len(target_files))
+        write_report(render_markdown(qr), output)
 
     # ArchitectAnalyst-C nunca bloquea — solo informa
     raise SystemExit(0)
