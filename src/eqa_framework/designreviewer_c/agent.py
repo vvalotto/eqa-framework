@@ -11,6 +11,13 @@ from rich.text import Text
 
 from eqa_framework.designreviewer_c.config import DesignReviewerConfig
 from eqa_framework.designreviewer_c.orchestrator import DesignReviewerOrchestrator
+from eqa_framework.shared.report import (
+    DimensionStatus,
+    QualityReport,
+    StatusLiteral,
+    render_markdown,
+    write_report,
+)
 from eqa_framework.shared.reporting import Report, Severity
 
 _SEVERITY_STYLE: dict[Severity, str] = {
@@ -78,11 +85,61 @@ def _find_project_root(start: Path) -> Path:
     return current
 
 
+def _build_quality_report(report: Report, target_path: str, file_count: int) -> QualityReport:
+    from datetime import date
+
+    def _dim(name: str, rules: list[str]) -> DimensionStatus:
+        matching = [f for f in report.findings if f.rule in rules]
+        critical = [f for f in matching if f.severity == Severity.CRITICAL]
+        warnings = [f for f in matching if f.severity == Severity.WARNING]
+        status: StatusLiteral
+        if critical:
+            status = "critical"
+            top = critical[:5]
+        elif warnings:
+            status = "warning"
+            top = warnings[:5]
+        else:
+            return DimensionStatus(name, "ok")
+        findings_str = [f"{f.file}:{f.line} — {f.message[:60]}" for f in top]
+        return DimensionStatus(name, status, findings_str)
+
+    deps_dim = _dim("Dependencias", ["INC001", "INC002"])
+    layers_dim = _dim("Capas", ["LAY001"])
+    dims = [deps_dim, layers_dim]
+
+    any_critical = any(d.status == "critical" for d in dims)
+    any_warning = any(d.status == "warning" for d in dims)
+    if any_critical:
+        summary = "Se detectaron violaciones críticas de diseño. Revisar antes de continuar."
+    elif any_warning:
+        summary = "Hay advertencias de diseño que merecen atención."
+    else:
+        summary = "Sin observaciones. El diseño cumple con los criterios configurados."
+
+    return QualityReport(
+        agent_name="DesignReviewer-C",
+        target_path=target_path,
+        file_count=file_count,
+        date=str(date.today()),
+        dimensions=dims,
+        summary=summary,
+    )
+
+
 @click.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
 @click.option("--format", "fmt", type=click.Choice(["text", "json"]), default="text")
 @click.option("--config", "config_path", type=click.Path(path_type=Path), default=None)
-def main(path: Path, fmt: str, config_path: Path | None) -> None:
+@click.option(
+    "--report",
+    "report_output",
+    is_flag=False,
+    flag_value="-",
+    default=None,
+    help="Genera perfil de calidad en Markdown. Sin argumento: stdout. Con argumento: archivo.",
+)
+def main(path: Path, fmt: str, config_path: Path | None, report_output: str | None) -> None:
     """DesignReviewer-C — análisis de diseño para PR review."""
     project_root = config_path.parent if config_path else _find_project_root(path)
     config = DesignReviewerConfig.from_project(project_root)
@@ -95,5 +152,10 @@ def main(path: Path, fmt: str, config_path: Path | None) -> None:
         _render_json(report)
     else:
         _render_text(report, elapsed)
+
+    if report_output is not None:
+        output = None if report_output == "-" else report_output
+        qr = _build_quality_report(report, str(path), len(target_files))
+        write_report(render_markdown(qr), output)
 
     raise SystemExit(orchestrator.exit_code(report))

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Literal
 
 StatusLiteral = Literal["ok", "warning", "critical"]
@@ -33,6 +35,20 @@ class QualityReport:
     date: str
     dimensions: list[DimensionStatus]
     summary: str
+
+
+def write_report(markdown: str, output: str | None) -> None:
+    """Escribe el Markdown a un archivo o a stdout.
+
+    Si output es None imprime a stdout. Si es una ruta, escribe el archivo
+    y confirma en stderr para no contaminar stdout.
+    """
+    if output is None:
+        sys.stdout.write(markdown)
+    else:
+        path = Path(output)
+        path.write_text(markdown, encoding="utf-8")
+        sys.stderr.write(f"Reporte guardado en {path}\n")
 
 
 def render_markdown(report: QualityReport) -> str:

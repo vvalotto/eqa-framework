@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import shutil
+from datetime import date
 from pathlib import Path
 
 import click
@@ -11,6 +12,13 @@ from rich.text import Text
 
 from eqa_framework.codeguard_c.config import CodeGuardConfig
 from eqa_framework.codeguard_c.orchestrator import BUDGET_SECONDS, CodeGuardOrchestrator
+from eqa_framework.shared.report import (
+    DimensionStatus,
+    QualityReport,
+    StatusLiteral,
+    render_markdown,
+    write_report,
+)
 from eqa_framework.shared.reporting import Report, Severity
 
 _SEVERITY_STYLE: dict[Severity, str] = {
@@ -74,11 +82,61 @@ def _render_json(report: Report) -> None:
     click.echo(json.dumps(data, indent=2))
 
 
+def _build_quality_report(report: Report, target_path: str, file_count: int) -> QualityReport:
+    def _dim(name: str, tools: list[str]) -> DimensionStatus:
+        matching = [f for f in report.findings if f.tool in tools]
+        critical = [f for f in matching if f.severity == Severity.CRITICAL]
+        warnings = [f for f in matching if f.severity == Severity.WARNING]
+        status: StatusLiteral
+        if critical:
+            status = "critical"
+            top = critical[:5]
+        elif warnings:
+            status = "warning"
+            top = warnings[:5]
+        else:
+            return DimensionStatus(name, "ok")
+        findings_str = [f"{f.file}:{f.line} — {f.message[:60]}" for f in top]
+        return DimensionStatus(name, status, findings_str)
+
+    complexity_dim = _dim("Complejidad", ["lizard"])
+    security_dim = _dim("Seguridad", ["flawfinder"])
+    misra_dim = _dim("MISRA", ["cppcheck"])
+
+    dims = [complexity_dim, security_dim, misra_dim]
+    any_critical = any(d.status == "critical" for d in dims)
+    any_warning = any(d.status == "warning" for d in dims)
+
+    if any_critical:
+        summary = "Se detectaron violaciones críticas. Revisar antes de continuar."
+    elif any_warning:
+        summary = "Hay advertencias que merecen atención."
+    else:
+        summary = "Sin observaciones. El código cumple con todos los umbrales configurados."
+
+    return QualityReport(
+        agent_name="CodeGuard-C",
+        target_path=target_path,
+        file_count=file_count,
+        date=str(date.today()),
+        dimensions=dims,
+        summary=summary,
+    )
+
+
 @click.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path))
 @click.option("--format", "fmt", type=click.Choice(["text", "json"]), default="text")
 @click.option("--config", "config_path", type=click.Path(path_type=Path), default=None)
-def main(path: Path, fmt: str, config_path: Path | None) -> None:
+@click.option(
+    "--report",
+    "report_output",
+    is_flag=False,
+    flag_value="-",
+    default=None,
+    help="Genera perfil de calidad en Markdown. Sin argumento: stdout. Con argumento: archivo.",
+)
+def main(path: Path, fmt: str, config_path: Path | None, report_output: str | None) -> None:
     """CodeGuard-C — análisis rápido pre-commit para C embebido."""
     project_root = config_path.parent if config_path else path if path.is_dir() else path.parent
     config = CodeGuardConfig.from_project(project_root)
@@ -91,5 +149,10 @@ def main(path: Path, fmt: str, config_path: Path | None) -> None:
         _render_json(report)
     else:
         _render_text(report, elapsed)
+
+    if report_output is not None:
+        output = None if report_output == "-" else report_output
+        qr = _build_quality_report(report, str(path), len(target_files))
+        write_report(render_markdown(qr), output)
 
     raise SystemExit(0)
