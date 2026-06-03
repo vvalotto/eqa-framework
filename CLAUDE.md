@@ -10,7 +10,7 @@ Guía para desarrolladores y para Claude Code. El README cubre instalación y us
 |--------|-----------|--------|
 | `codeguard-c` | v0.1.0 | ✅ Implementado y publicado en PyPI |
 | `designreviewer-c` | v0.2.0 | ✅ Implementado (issues #7–#9 cerrados) |
-| `architectanalyst-c` | v0.3.0 | 🚧 En desarrollo (issues #10–#12) |
+| `architectanalyst-c` | v0.3.0 | ✅ Implementado (issues #10–#12 cerrados) |
 
 118 tests en total (unit + integration + e2e). `shared/` completamente funcional.
 
@@ -146,4 +146,6 @@ Los tests de integración y e2e requieren cppcheck instalado en el sistema.
 - `docs/guias/codeguard-c.md` — guía de usuario de CodeGuard-C
 - `docs/agentes/designreviewer-c.md` — referencia técnica de DesignReviewer-C (INC001, INC002, LAY001)
 - `docs/guias/designreviewer-c.md` — guía de usuario de DesignReviewer-C
+- `docs/agentes/architectanalyst-c.md` — referencia técnica de ArchitectAnalyst-C (ARC001, ARC002, ARC003)
+- `docs/guias/architectanalyst-c.md` — guía de usuario de ArchitectAnalyst-C
 - `docs/specs/` — plan del proyecto y plan de entorno original

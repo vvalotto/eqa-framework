@@ -43,29 +43,8 @@ enabled    = false
 max_tokens = 800
 
 [tool.architectanalyst-c]
-max_instability       = 0.8
-max_distance_warning  = 0.3
-max_distance_critical = 0.5
-db_path               = ".quality_control/embedded_architecture.db"
-exclude_patterns      = ["build/", "third_party/", "__pycache__"]
-
-[tool.architectanalyst-c.checks]
-coupling          = true
-instability       = true
-distance          = true
-dependency_cycles = true
-layer_violations  = true
-misra_coverage    = true
-
-[tool.architectanalyst-c.layers]
-# Definir la arquitectura en capas del proyecto C analizado.
-# Ejemplo para sistema embebido típico:
-# platform      = []
-# hal           = ["platform"]
-# bsp           = ["hal", "platform"]
-# drivers       = ["hal", "bsp"]
-# application   = ["drivers", "hal"]
-
-[tool.architectanalyst-c.ai]
-enabled    = false
-max_tokens = 1500
+max_instability       = 0.8    # WARNING si I = Ce/(Ca+Ce) supera este umbral
+max_distance_warning  = 0.3    # WARNING si D = |A+I-1| supera este umbral
+max_distance_critical = 0.5    # CRITICAL si D supera este umbral (Zone of Pain/Uselessness)
+db_path               = ".quality_control/embedded_architecture.db"  # SQLite del histórico
+exclude_patterns      = ["build/", "third_party/"]
