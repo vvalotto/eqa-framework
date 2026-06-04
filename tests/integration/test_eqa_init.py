@@ -72,3 +72,15 @@ class TestNoInteractive:
         assert "codeguard-c" in result.output
         assert "designreviewer-c" in result.output
         assert "architectanalyst-c" in result.output
+
+
+class TestGuide:
+    def test_guide_exits_zero(self) -> None:
+        result = CliRunner().invoke(main, ["--guide"])
+        assert result.exit_code == 0
+
+    def test_guide_contains_key_sections(self) -> None:
+        result = CliRunner().invoke(main, ["--guide"])
+        assert "eqa-init" in result.output
+        assert "codeguard-c" in result.output
+        assert "pip install" in result.output

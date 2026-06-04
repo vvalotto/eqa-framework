@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from importlib.resources import files
 from pathlib import Path
 
 import click
+from rich.console import Console
+from rich.markdown import Markdown
 
 from eqa_framework.init.scanner import DirectoryScanner
 from eqa_framework.init.writer import ConfigWriter, generate_toml
@@ -23,8 +26,20 @@ _SECTION_LABELS = {
     default=False,
     help="Escribe defaults sin lanzar la TUI. La sección de capas queda pendiente de edición manual.",
 )
-def main(path: Path, src_dir: str | None, no_interactive: bool) -> None:
+@click.option(
+    "--guide",
+    is_flag=True,
+    default=False,
+    help="Muestra la guía de instalación y quick start.",
+)
+def main(path: Path, src_dir: str | None, no_interactive: bool, guide: bool) -> None:
     """eqa-init — inicializa la configuración de eqa-framework en un proyecto C."""
+    if guide:
+        content = (
+            files("eqa_framework.init").joinpath("getting-started.md").read_text(encoding="utf-8")
+        )
+        Console().print(Markdown(content))
+        raise SystemExit(0)
     scanner = DirectoryScanner()
     candidates = scanner.scan(path, src_dir)
 

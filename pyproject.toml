@@ -49,6 +49,9 @@ eqa-init           = "eqa_framework.init.agent:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"eqa_framework.init" = ["getting-started.md"]
+
 # ── Herramientas ──────────────────────────────────────────────────────────────
 
 [tool.black]
