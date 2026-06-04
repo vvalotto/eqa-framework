@@ -77,7 +77,7 @@ disallow_untyped_decorators = false
 
 [[tool.mypy.overrides]]
 # Textual no expone tipos genéricos que mypy strict pueda resolver en subclases ni decoradores
-module = ["eqa_framework.config_editor.app"]
+module = ["eqa_framework.config_editor.app", "eqa_framework.init.app"]
 disallow_subclassing_any = false
 disallow_untyped_decorators = false
 
