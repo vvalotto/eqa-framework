@@ -123,6 +123,9 @@ Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.
 **Referencia:**
 - [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) — todas las opciones de configuración
 
+**Inicio rápido:**
+- [`docs/guias/getting-started.md`](docs/guias/getting-started.md) — instalación y primeros pasos
+
 ## Contribuir
 
 Ver [CLAUDE.md](CLAUDE.md) para instrucciones de entorno, convenciones y arquitectura interna.
