@@ -13,14 +13,15 @@ Guía para desarrolladores y para Claude Code. El README cubre instalación y us
 | `architectanalyst-c` | v0.3.0 | ✅ Implementado (issues #10–#12 cerrados) |
 | `eqa-config` (TUI) | v0.4.0 | ✅ Implementado (issues #31–#35 cerrados) |
 | Reportes Markdown (`--report`) | v0.5.0 | ✅ Implementado (issues #36–#40 cerrados) |
+| `eqa-init` (bootstrap config) | v0.6.0 | ✅ Implementado (issues #51–#55 cerrados) |
 
-279 tests en total (unit + integration + e2e). `shared/` completamente funcional.
+324 tests en total (unit + integration + e2e). `shared/` completamente funcional.
 
 ---
 
 ## Arquitectura
 
-Tres agentes CLI + una TUI de configuración, todos comparten el paquete `shared/`:
+Tres agentes CLI + dos herramientas de soporte, todos comparten el paquete `shared/`:
 
 ```
 src/eqa_framework/
@@ -28,7 +29,8 @@ src/eqa_framework/
 ├── codeguard_c/      ← CLI: codeguard-c    | orquesta cppcheck + flawfinder + lizard
 ├── designreviewer_c/ ← CLI: designreviewer-c | analiza dependencias e includes
 ├── architectanalyst_c/ ← CLI: architectanalyst-c | métricas de acoplamiento, histórico SQLite
-└── config_editor/    ← CLI: eqa-config     | TUI Textual para config personal
+├── config_editor/    ← CLI: eqa-config     | TUI Textual para config personal
+└── init/             ← CLI: eqa-init       | bootstrap pyproject.toml con TUI de capas
 ```
 
 Cada agente CLI tiene la misma estructura interna:
@@ -188,4 +190,6 @@ Los tests de integración y e2e requieren cppcheck instalado en el sistema.
 - `docs/guias/eqa-config.md` — guía de usuario de eqa-config
 - `docs/agentes/quality-report.md` — referencia técnica del sistema de reportes Markdown (QualityReport, DimensionStatus, render_markdown, dimensiones por agente)
 - `docs/guias/quality-report.md` — guía de uso del flag `--report` en los tres agentes
+- `docs/agentes/eqa-init.md` — referencia técnica de eqa-init (DirectoryScanner, ConfigWriter, LayerWizardApp, defaults generados)
+- `docs/guias/eqa-init.md` — guía de usuario de eqa-init (TUI de capas, --no-interactive, casos de uso)
 - `docs/specs/` — plan del proyecto y plan de entorno original

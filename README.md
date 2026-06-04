@@ -16,6 +16,21 @@ Framework Python de código abierto que orquesta herramientas de análisis está
 | `designreviewer-c` | PR review | < 10 s | Bloquea si hay hallazgos CRITICAL | ✅ v0.2.0 |
 | `architectanalyst-c` | Fin de sprint | 5–30 min | Solo informa, guarda histórico en SQLite | ✅ v0.3.0 |
 
+## Inicio rápido — `eqa-init`
+
+`eqa-init` genera la configuración de eqa-framework en un proyecto C existente con un solo comando:
+
+```bash
+cd /path/to/mi-proyecto-c
+eqa-init .
+```
+
+Escanea los subdirectorios, lanza una TUI para definir la jerarquía de capas y escribe las tres secciones `[tool.*]` en `pyproject.toml`. Para entornos sin terminal interactiva:
+
+```bash
+eqa-init . --no-interactive
+```
+
 ## Editor de configuración personal
 
 `eqa-config` es una TUI que permite a cada desarrollador sobreescribir umbrales de los agentes a nivel personal, sin tocar el `pyproject.toml` del proyecto.
@@ -45,10 +60,11 @@ sudo apt install cppcheck    # Linux
 ## Uso rápido
 
 ```bash
-codeguard-c src/
-designreviewer-c src/ --format json
-architectanalyst-c src/ --sprint-id sprint-01
-eqa-config
+eqa-init .                                          # inicializar configuración (una vez)
+codeguard-c src/                                    # análisis pre-commit
+designreviewer-c src/ --format json                 # análisis PR review
+architectanalyst-c src/ --sprint-id sprint-01       # análisis fin de sprint
+eqa-config                                          # editor de umbrales personales
 ```
 
 ### Perfil de calidad en Markdown
@@ -95,6 +111,10 @@ Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.
 **Editor de configuración:**
 - [`docs/agentes/eqa-config.md`](docs/agentes/eqa-config.md) — referencia técnica de eqa-config
 - [`docs/guias/eqa-config.md`](docs/guias/eqa-config.md) — guía de usuario de eqa-config
+
+**Inicialización:**
+- [`docs/agentes/eqa-init.md`](docs/agentes/eqa-init.md) — referencia técnica de eqa-init
+- [`docs/guias/eqa-init.md`](docs/guias/eqa-init.md) — guía de usuario de eqa-init
 
 **Perfil de calidad:**
 - [`docs/agentes/quality-report.md`](docs/agentes/quality-report.md) — referencia técnica del sistema de reportes Markdown
