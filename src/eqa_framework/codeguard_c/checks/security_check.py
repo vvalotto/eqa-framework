@@ -75,6 +75,8 @@ class SecurityCheck(Verifiable):
         reader = csv.DictReader(StringIO(flawfinder_csv))
         for row in reader:
             try:
+                if not row.get("Level"):
+                    continue
                 level = int(row["Level"])
                 severity = _level_to_severity(level)
                 if severity is None:
