@@ -44,6 +44,7 @@ codeguard-c        = "eqa_framework.codeguard_c.agent:main"
 designreviewer-c   = "eqa_framework.designreviewer_c.agent:main"
 architectanalyst-c = "eqa_framework.architectanalyst_c.agent:main"
 eqa-config         = "eqa_framework.config_editor.app:main"
+eqa-init           = "eqa_framework.init.agent:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
