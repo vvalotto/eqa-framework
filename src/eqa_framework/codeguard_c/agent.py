@@ -143,7 +143,7 @@ def main(path: Path, fmt: str, config_path: Path | None, report_output: str | No
     orchestrator = CodeGuardOrchestrator(config)
 
     target_files = list(path.rglob("*.[ch]")) if path.is_dir() else [path]
-    report, elapsed = orchestrator.run(project_root, target_files)
+    report, elapsed = orchestrator.run(project_root, target_files, progress=(fmt != "json"))
 
     if fmt == "json":
         _render_json(report)

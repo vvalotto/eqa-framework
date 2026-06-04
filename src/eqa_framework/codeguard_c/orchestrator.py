@@ -27,13 +27,16 @@ class CodeGuardOrchestrator:
         self._config = config
         self._checks = [MisraCheck(config), SecurityCheck(config), ComplexityCheck(config)]
 
-    def run(self, project_root: Path, target_files: list[Path]) -> tuple[Report, float]:
+    def run(
+        self, project_root: Path, target_files: list[Path], progress: bool = True
+    ) -> tuple[Report, float]:
         context = ExecutionContext(project_root=project_root, target_files=target_files)
         report = Report(agent="codeguard-c")
         t0 = time.perf_counter()
         for check in self._checks:
-            label = _CHECK_LABEL.get(check.name, check.name)
-            print(f"→ {label}...", file=sys.stderr)
+            if progress:
+                label = _CHECK_LABEL.get(check.name, check.name)
+                print(f"→ {label}...", file=sys.stderr)
             for finding in check.run(context):
                 report.add(finding)
         elapsed = time.perf_counter() - t0
