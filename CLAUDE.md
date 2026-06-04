@@ -12,8 +12,9 @@ Guía para desarrolladores y para Claude Code. El README cubre instalación y us
 | `designreviewer-c` | v0.2.0 | ✅ Implementado (issues #7–#9 cerrados) |
 | `architectanalyst-c` | v0.3.0 | ✅ Implementado (issues #10–#12 cerrados) |
 | `eqa-config` (TUI) | v0.4.0 | ✅ Implementado (issues #31–#35 cerrados) |
+| Reportes Markdown (`--report`) | v0.5.0 | ✅ Implementado (issues #36–#40 cerrados) |
 
-205 tests en total (unit + integration + e2e). `shared/` completamente funcional.
+279 tests en total (unit + integration + e2e). `shared/` completamente funcional.
 
 ---
 
@@ -185,4 +186,6 @@ Los tests de integración y e2e requieren cppcheck instalado en el sistema.
 - `docs/guias/architectanalyst-c.md` — guía de usuario de ArchitectAnalyst-C
 - `docs/agentes/eqa-config.md` — referencia técnica de eqa-config (TUI, PersonalConfig, precedencia)
 - `docs/guias/eqa-config.md` — guía de usuario de eqa-config
+- `docs/agentes/quality-report.md` — referencia técnica del sistema de reportes Markdown (QualityReport, DimensionStatus, render_markdown, dimensiones por agente)
+- `docs/guias/quality-report.md` — guía de uso del flag `--report` en los tres agentes
 - `docs/specs/` — plan del proyecto y plan de entorno original

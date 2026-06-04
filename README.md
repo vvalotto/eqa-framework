@@ -51,6 +51,16 @@ architectanalyst-c src/ --sprint-id sprint-01
 eqa-config
 ```
 
+### Perfil de calidad en Markdown
+
+Cualquiera de los tres agentes puede generar un perfil de calidad Markdown con `--report`:
+
+```bash
+codeguard-c src/ --report calidad-codeguard.md
+designreviewer-c src/ --report calidad-design.md
+architectanalyst-c src/ --sprint-id sprint-01 --report calidad-arch.md
+```
+
 ## Configuración
 
 Los agentes se configuran en `pyproject.toml` del proyecto C que se analiza:
@@ -85,6 +95,10 @@ Ver [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.
 **Editor de configuración:**
 - [`docs/agentes/eqa-config.md`](docs/agentes/eqa-config.md) — referencia técnica de eqa-config
 - [`docs/guias/eqa-config.md`](docs/guias/eqa-config.md) — guía de usuario de eqa-config
+
+**Perfil de calidad:**
+- [`docs/agentes/quality-report.md`](docs/agentes/quality-report.md) — referencia técnica del sistema de reportes Markdown
+- [`docs/guias/quality-report.md`](docs/guias/quality-report.md) — guía de uso del flag `--report`
 
 **Referencia:**
 - [`examples/configs/pyproject.toml.example`](examples/configs/pyproject.toml.example) — todas las opciones de configuración

@@ -42,6 +42,16 @@ Apuntar a una configuración en una ubicación no estándar:
 designreviewer-c src/ --config /path/to/pyproject.toml
 ```
 
+Generar un perfil de calidad en Markdown:
+
+```bash
+# Imprimir el perfil en stdout
+designreviewer-c src/ --report
+
+# Guardar el perfil en un archivo
+designreviewer-c src/ --report calidad.md
+```
+
 ---
 
 ## Interpretar el output

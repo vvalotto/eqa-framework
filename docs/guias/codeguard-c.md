@@ -55,6 +55,16 @@ Apuntar a una configuración en una ubicación no estándar:
 codeguard-c src/ --config /path/to/pyproject.toml
 ```
 
+Generar un perfil de calidad en Markdown:
+
+```bash
+# Imprimir el perfil en stdout
+codeguard-c src/ --report
+
+# Guardar el perfil en un archivo
+codeguard-c src/ --report calidad.md
+```
+
 ---
 
 ## Interpretar el output

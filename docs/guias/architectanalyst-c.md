@@ -38,6 +38,16 @@ Apuntar a una configuración en una ubicación no estándar:
 architectanalyst-c src/ --sprint-id sprint-03 --config /path/to/pyproject.toml
 ```
 
+Generar un perfil de calidad en Markdown:
+
+```bash
+# Imprimir el perfil en stdout
+architectanalyst-c src/ --sprint-id sprint-03 --report
+
+# Guardar el perfil en un archivo
+architectanalyst-c src/ --sprint-id sprint-03 --report calidad-arch.md
+```
+
 ---
 
 ## Interpretar el output
