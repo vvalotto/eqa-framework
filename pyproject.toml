@@ -10,6 +10,7 @@ readme      = "README.md"
 license     = "MIT"
 requires-python = ">=3.11"
 authors     = [{name = "Victor Valotto", email = "vvalotto@gmail.com"}]
+maintainers = [{name = "Victor Valotto", email = "vvalotto@gmail.com"}]
 keywords    = ["embedded", "quality", "misra", "iec62304", "cppcheck", "static-analysis", "c"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -46,6 +47,11 @@ architectanalyst-c = "eqa_framework.architectanalyst_c.agent:main"
 eqa-config         = "eqa_framework.config_editor.app:main"
 eqa-init           = "eqa_framework.init.agent:main"
 eqa                = "eqa_framework.cli:main"
+
+[project.urls]
+Homepage      = "https://github.com/vvalotto/eqa-framework"
+Repository    = "https://github.com/vvalotto/eqa-framework"
+"Bug Tracker" = "https://github.com/vvalotto/eqa-framework/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
