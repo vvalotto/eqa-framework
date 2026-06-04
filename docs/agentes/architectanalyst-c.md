@@ -12,27 +12,15 @@ No compila el código ni invoca herramientas externas. Parsea directivas `#inclu
 
 ## Arquitectura interna
 
-```
-architectanalyst-c <path> --sprint-id sprint-03
-      │
-      ▼
-  agent.py  (CLI Click)
-      │  recolecta *.c y *.h, busca pyproject.toml hacia arriba
-      │  carga ArchitectAnalystConfig
-      ▼
-  ArchitectAnalystOrchestrator
-      │  carga snapshot previo de SQLite (para comparar tendencias)
-      │  ejecuta CouplingAnalyzer
-      │  guarda snapshot actual en SQLite
-      ├──▶ CouplingAnalyzer   → grafo de dependencias, Ca/Ce/I/A/D por módulo
-      └──▶ SnapshotStore      → SQLite: save / load_last / load_history
-                │
-                ▼
-            list[ModuleMetrics] + list[Finding]
-                │
-                ▼
-  Render: tabla Rich con tendencias (texto) o JSON
-  Exit code: siempre 0
+```mermaid
+flowchart TD
+    CMD["architectanalyst-c &lt;path&gt; --sprint-id sprint-03"] --> AGENT["agent.py — CLI Click\nrecolecta *.c y *.h · carga ArchitectAnalystConfig"]
+    AGENT --> ORCH["ArchitectAnalystOrchestrator\ncarga snapshot previo de SQLite\nejecutaCouplingAnalyzer · guarda snapshot actual"]
+    ORCH --> CA["CouplingAnalyzer\ngrafo de dependencias\nCa / Ce / I / A / D por módulo"]
+    ORCH --> SS["SnapshotStore\nSQLite: save · load_last · load_history"]
+    CA & SS --> METRICS["list[ModuleMetrics] + list[Finding]"]
+    METRICS --> RENDER["Render: tabla Rich con tendencias — texto o JSON"]
+    RENDER --> EXIT["Exit code: siempre 0"]
 ```
 
 El orchestrator carga el snapshot previo **antes** de guardar el actual, de modo que `load_last(sprint_id)` retorna la instantánea del sprint anterior para calcular los deltas.

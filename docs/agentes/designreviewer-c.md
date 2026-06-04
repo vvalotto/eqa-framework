@@ -12,25 +12,15 @@ A diferencia de CodeGuard-C, DesignReviewer-C retorna **exit code 1 si encuentra
 
 ## Arquitectura interna
 
-```
-designreviewer-c <path>
-      │
-      ▼
-  agent.py  (CLI Click)
-      │  recolecta *.c y *.h, busca pyproject.toml hacia arriba
-      │  carga DesignReviewerConfig (incluye jerarquía de capas)
-      ▼
-  DesignReviewerOrchestrator
-      │  ejecuta los dos analyzers en secuencia
-      ├──▶ IncludeGraphAnalyzer   → parsea #include, DFS para ciclos, fan-out
-      └──▶ LayerViolationsAnalyzer → determina capa por path, verifica dependencias
-                │
-                ▼
-            list[Finding]
-                │
-                ▼
-  Render: tabla Rich (texto) o JSON
-  Exit code: 1 si CRITICAL, 0 si no
+```mermaid
+flowchart TD
+    CMD["designreviewer-c &lt;path&gt;"] --> AGENT["agent.py — CLI Click\nrecolecta *.c y *.h · busca pyproject.toml hacia arriba\ncarga DesignReviewerConfig"]
+    AGENT --> ORCH["DesignReviewerOrchestrator\nejecutalos dos analyzers en secuencia"]
+    ORCH --> IGA["IncludeGraphAnalyzer\nparsea #include · DFS para ciclos · fan-out"]
+    ORCH --> LVA["LayerViolationsAnalyzer\ndetermina capa por path · verifica dependencias"]
+    IGA & LVA --> FINDINGS["list[Finding]"]
+    FINDINGS --> RENDER["Render: tabla Rich — texto o JSON"]
+    RENDER --> EXIT["Exit code: 1 si CRITICAL · 0 si no"]
 ```
 
 Cada analyzer recibe un `ExecutionContext` con la lista de archivos filtrada por `exclude_patterns` y retorna una lista de `Finding`. El orquestador agrega todos los findings en un `Report` y mide el tiempo total.

@@ -10,17 +10,13 @@ El objetivo es que cada desarrollador pueda ajustar umbrales a su estilo de trab
 
 ## Arquitectura interna
 
-```
-eqa-config
-      │
-      ▼
-  app.py  (Textual App)
-      │  carga PersonalConfig (~/.config/eqa/config.toml)
-      │  carga config de proyecto (pyproject.toml, apply_personal=False)
-      │
-      ├── DataTable  ← tabla de 14 keys editables de los tres agentes
-      ├── EditScreen ← modal de edición con validación de tipo (ModalScreen)
-      └── QuitScreen ← modal de confirmación al salir con cambios sin guardar
+```mermaid
+flowchart TD
+    CMD["eqa-config"] --> APP["app.py — Textual App\ncarga PersonalConfig · carga config de proyecto"]
+    APP --> TABLE["DataTable\n14 keys editables de los tres agentes"]
+    APP --> EDIT["EditScreen\nmodal de edición con validación de tipo"]
+    APP --> QUIT["QuitScreen\nmodal de confirmación al salir con cambios"]
+    TABLE --> SAVE["Guardar → ~/.config/eqa/config.toml"]
 ```
 
 ```
@@ -86,12 +82,13 @@ Las secciones espejean `[tool.<agente>]` de `pyproject.toml`, pero sin el prefij
 
 El merge se aplica en `shared/config.load_toml_section()` con `apply_personal=True` (defecto):
 
-```
-defaults del dataclass
-    ↓ sobreescrito por
-[tool.<agente>] en pyproject.toml del proyecto
-    ↓ sobreescrito por
-[<agente>] en ~/.config/eqa/config.toml
+```mermaid
+flowchart TD
+    D["defaults del dataclass"] -->|sobreescrito por| P["[tool.agente] en pyproject.toml del proyecto"]
+    P -->|sobreescrito por| C["[agente] en ~/.config/eqa/config.toml"]
+    style D fill:#555,color:#fff,stroke:#777
+    style P fill:#336,color:#fff,stroke:#557
+    style C fill:#363,color:#fff,stroke:#575
 ```
 
 El merge es **clave a clave**: tener un valor personal para `max_instability` no anula el resto de keys del agente.

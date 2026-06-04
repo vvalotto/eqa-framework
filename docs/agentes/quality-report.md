@@ -10,23 +10,14 @@ El reporte se activa con el flag `--report` en cualquiera de los tres agentes. N
 
 ## Arquitectura
 
-```
-agent.py
-    │  ejecuta análisis normal (texto o JSON → stdout)
-    │
-    └──▶ _build_quality_report(report, ...)
-              │  agrupa findings por dimensión
-              ▼
-         QualityReport
-              │
-              ▼
-         render_markdown(qr) → str
-              │
-              ▼
-         write_report(markdown, output)
-              │
-              ├──▶ output=None  → sys.stdout.write()
-              └──▶ output=path  → path.write_text() + confirmación en stderr
+```mermaid
+flowchart TD
+    AGENT["agent.py\nejecutaanálisis normal — texto o JSON a stdout"] --> BUILD["_build_quality_report(report, ...)\nagrupa findings por dimensión"]
+    BUILD --> QR["QualityReport"]
+    QR --> RENDER["render_markdown(qr) → str"]
+    RENDER --> WRITE["write_report(markdown, output)"]
+    WRITE --> STDOUT["output=None\nsys.stdout.write()"]
+    WRITE --> FILE["output=path\npath.write_text() + confirmación en stderr"]
 ```
 
 El módulo `shared/report.py` contiene las clases y funciones compartidas. Cada agente implementa su propia función `_build_quality_report` interna que mapea sus findings a dimensiones semánticas.

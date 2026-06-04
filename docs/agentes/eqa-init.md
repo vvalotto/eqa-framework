@@ -10,20 +10,16 @@ El comando se corre una sola vez al incorporar eqa-framework a un proyecto. No a
 
 ## Arquitectura interna
 
-```
-eqa-init <path>
-      │
-      ▼
-  agent.py  (CLI Click)
-      │  escanea directorios
-      ├──▶ DirectoryScanner.scan()   → list[str] candidatos
-      │
-      │  modo interactivo (default)
-      ├──▶ LayerWizardApp(candidates).run()  → list[str] | None
-      │
-      │  genera y escribe TOML
-      └──▶ generate_toml(layers)     → str
-           ConfigWriter.write(path)  → list[str] secciones escritas
+```mermaid
+flowchart TD
+    CMD["eqa-init &lt;path&gt;"] --> SCAN["DirectoryScanner.scan()\n→ candidatos de capa"]
+    SCAN --> INTER{Interactivo?}
+    INTER -->|"sí (default)"| TUI["LayerWizardApp.run()\n→ list[str] | None"]
+    INTER -->|"--no-interactive"| EMPTY["layers = []"]
+    TUI -->|cancelado| EXIT["Salir sin escribir"]
+    TUI -->|confirmado| GEN["generate_toml(layers)"]
+    EMPTY --> GEN
+    GEN --> WRITE["ConfigWriter.write(path)\n→ secciones escritas en pyproject.toml"]
 ```
 
 ---

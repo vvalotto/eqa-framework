@@ -10,24 +10,15 @@ El agente no compila el código. Todas las herramientas que usa operan sobre el 
 
 ## Arquitectura interna
 
-```
-codeguard-c <path>
-      │
-      ▼
-  agent.py  (CLI Click)
-      │  recolecta *.c y *.h, carga CodeGuardConfig
-      ▼
-  CodeGuardOrchestrator
-      │  ejecuta los tres checks en secuencia
-      ├──▶ MisraCheck      → cppcheck --xml --addon=misra
-      ├──▶ SecurityCheck   → flawfinder --dataonly --csv
-      └──▶ ComplexityCheck → lizard --csv
-                │
-                ▼
-            list[Finding]
-                │
-                ▼
-  Render: tabla Rich (texto) o JSON
+```mermaid
+flowchart TD
+    CMD["codeguard-c &lt;path&gt;"] --> AGENT["agent.py — CLI Click\nrecolecta *.c y *.h · carga CodeGuardConfig"]
+    AGENT --> ORCH["CodeGuardOrchestrator\nejecutalos tres checks en secuencia"]
+    ORCH --> MISRA["MisraCheck\ncppcheck --xml --addon=misra"]
+    ORCH --> SEC["SecurityCheck\nflawfinder --dataonly --csv"]
+    ORCH --> COMP["ComplexityCheck\nlizard --csv"]
+    MISRA & SEC & COMP --> FINDINGS["list[Finding]"]
+    FINDINGS --> RENDER["Render: tabla Rich — texto o JSON"]
 ```
 
 Cada check recibe un `ExecutionContext` con la lista de archivos filtrada por `exclude_patterns`, invoca su herramienta externa como subproceso, parsea el output, y retorna una lista de `Finding`. El orquestador agrega todos los findings en un `Report` y mide el tiempo total.
